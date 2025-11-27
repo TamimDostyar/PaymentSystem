@@ -1,32 +1,49 @@
 plugins {
     id 'application'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 application {
-    mainClass = 'payment.Main'
+    mainClass = 'payment.Application'
 }
 
-
-
-dependencies {
-	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-	implementation 'org.apache.commons:commons-lang3:3.18.0'
-	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
-	// https://mvnrepository.com/artifact/org.junit/junit-bom
-	// testImplementation 'org.junit:junit-bom:5.13.4'
-	// https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite-engine
-	testImplementation 'org.junit.platform:junit-platform-suite-engine:1.13.4'
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
+dependencies {
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+    
+    // Testing dependencies
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
 test {
-	useJUnitPlatform()
-	testLogging {
-		events "passed", "skipped", "failed"
-	}
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
