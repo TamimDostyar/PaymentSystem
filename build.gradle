@@ -1,0 +1,32 @@
+plugins {
+    id 'application'
+}
+
+application {
+    mainClass = 'payment.Main'
+}
+
+
+
+dependencies {
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation 'org.apache.commons:commons-lang3:3.18.0'
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
+	// https://mvnrepository.com/artifact/org.junit/junit-bom
+	// testImplementation 'org.junit:junit-bom:5.13.4'
+	// https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite-engine
+	testImplementation 'org.junit.platform:junit-platform-suite-engine:1.13.4'
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
