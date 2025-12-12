@@ -39,6 +39,7 @@ dependencies {
     
     // Testing dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.xerial:sqlite-jdbc:3.43.2.0'
 }
 
 test {
