@@ -18,6 +18,7 @@ public class UsersController {
     // user database 
     UsersDatabase userDatabase = new UsersDatabase();
 
+
     // these information later needs to come from database upon the user is verified
     @GetMapping("/user-information")
     public Map<String, String> allInformation(
@@ -34,6 +35,17 @@ public class UsersController {
             userD.add(user.username());
         }
         return fullInformation;
+    }
+    @GetMapping("/db-init")
+    public Map<String, String> initializeDB() {
+        Map<String, String> msg = new HashMap<>();
+        try {
+            userDatabase.initializeTable();
+            msg.put("Success", "Successfully initialized");
+        } catch (Exception e) {
+            msg.put("Error", "Initialization failed");
+        }
+        return msg;
     }
 
 }
