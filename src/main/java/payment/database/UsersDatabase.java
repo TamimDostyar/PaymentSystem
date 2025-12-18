@@ -2,6 +2,7 @@
 
 package payment.database;
 
+import payment.accounts.CreateUser;
 import payment.accounts.Users;
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ public class UsersDatabase {
                 "address TEXT NOT NULL, " +
                 "accountType TEXT NOT NULL, " +
                 "username TEXT UNIQUE, " +
-                "phoneNumber INTEGER NOT NULL" +
+                "phoneNumber INTEGER NOT NULL, " +
+                "password TEXT NOT NULL, " +
                 ")";
         
         try (Connection conn = getConnection();
@@ -47,14 +49,14 @@ public class UsersDatabase {
      * @param user The Users object containing user information
      * @return String message indicating success or failure
      */
-    public String createUserAccount(Users user) {
+    public String createUserAccount(CreateUser user) {
         if (user == null) {
             return "Error: User object cannot be null";
         }
         
         String insertSQL = "INSERT INTO " + TABLE_NAME + 
-                " (name, lastName, address, accountType, username, phoneNumber) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                " (name, lastName, address, accountType, username, phoneNumber, password) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn != null ? conn.prepareStatement(insertSQL) : null) {
@@ -63,20 +65,30 @@ public class UsersDatabase {
                 return "Error: Could not establish database connection";
             }
             
-            pstmt.setString(1, user.name());
-            pstmt.setString(2, user.lastName());
-            pstmt.setString(3, user.address());
-            pstmt.setString(4, user.accountType());
-            pstmt.setString(5, user.username());
-            pstmt.setInt(6, user.phoneNumber());
+            // Validate passwords match
+            if (!user.getPassword().equals(user.getConfirmPassword())){
+                return "passwords don't match";
+            }
+            
+            // Hash the password before storing
+            String hashedPassword = CreateUser.hashPassword(user.getPassword());
+            
+            pstmt.setString(1, user.getName());
+            pstmt.setString(2, user.getLastName());
+            pstmt.setString(3, user.getAddress());
+            pstmt.setString(4, user.getAccountType());
+            pstmt.setString(5, user.getUsername());
+            pstmt.setInt(6, user.getPhoneNumber());
+            pstmt.setString(7, hashedPassword);
             
             int rowsAffected = pstmt.executeUpdate();
-            
             if (rowsAffected > 0) {
-                return "User account created successfully for: " + user.username();
+                return "User account created successfully for: " + user.getUsername();
             } else {
                 return "Error: Failed to create user account";
             }
+            
+
             
         } catch (SQLException e) {
             if (e.getMessage().contains("UNIQUE constraint")) {
@@ -177,11 +189,11 @@ public class UsersDatabase {
                 return "Error: Could not establish database connection";
             }
             
-            pstmt.setString(1, user.name());
-            pstmt.setString(2, user.lastName());
-            pstmt.setString(3, user.address());
-            pstmt.setString(4, user.accountType());
-            pstmt.setInt(5, user.phoneNumber());
+            pstmt.setString(1, user.getName());
+            pstmt.setString(2, user.getLastName());
+            pstmt.setString(3, user.getAddress());
+            pstmt.setString(4, user.getAccountType());
+            pstmt.setInt(5, user.getPhoneNumber());
             pstmt.setString(6, username);
             
             int rowsAffected = pstmt.executeUpdate();

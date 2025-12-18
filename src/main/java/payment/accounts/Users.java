@@ -12,6 +12,7 @@ public class Users {
     private String username = null;
     private Integer phoneNumber;
 
+
     public Users(String name, String lastName, String address, String accountType, Integer phoneNumber, String username){
         this.name = name;
         this.lastName = lastName;
@@ -19,7 +20,9 @@ public class Users {
         this.accountType = accountType;
         this.phoneNumber = phoneNumber;
         this.username = username;
+
     }
+
 
     public Map<String, Object> getAllData() {
         Map<String, Object> allData = new HashMap<>();
@@ -31,28 +34,28 @@ public class Users {
         allData.put("phoneNumber", this.phoneNumber);
         return allData;
     }
-
-    public String name(){
+    
+    public String getName(){
         return this.name;
     }
 
-    public String lastName() {
+    public String getLastName() {
         return this.lastName;
     }
 
-    public String address(){
+    public String getAddress(){
         return this.address;
     }
 
-    public String accountType() {
+    public String getAccountType() {
         return this.accountType;
     }
 
-    public String username() {
+    public String getUsername() {
         return this.username;
     }
 
-    public Integer phoneNumber() {
+    public Integer getPhoneNumber() {
         return this.phoneNumber;
     }
 }
