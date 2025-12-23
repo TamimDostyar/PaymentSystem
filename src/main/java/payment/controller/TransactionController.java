@@ -8,10 +8,10 @@ import java.util.Map;
 
 @RestController
 public class TransactionController {
-
     @GetMapping("/transaction")
     public Map<String, String> transaction(){
         Transaction transaction = new Transaction();
         return transaction.transaction();
     }
+    
 }

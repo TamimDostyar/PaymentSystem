@@ -1,4 +1,10 @@
 // this is the simple database that creates information for each users
+/**
+ * @author: Tamim Dostyar
+ * This page creates, deletes, and updates user accounts for login in the app
+ */
+
+
 
 package payment.database;
 
@@ -21,7 +27,7 @@ public class UsersDatabase {
      * Initializes the users table if it doesn't exist.
      * This method should be called before performing any operations.
      */
-    public void initializeTable() {
+    public void create_userDB() {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT NOT NULL, " +
@@ -134,38 +140,6 @@ public class UsersDatabase {
         return null;
     }
     
-    /**
-     * Retrieves all users from the database.
-     * @return List of Users objects
-     */
-    public List<Users> getAllUsers() {
-        List<Users> users = new ArrayList<>();
-        String selectSQL = "SELECT * FROM " + TABLE_NAME;
-        
-        try (Connection conn = getConnection();
-             Statement stmt = conn != null ? conn.createStatement() : null;
-             ResultSet rs = stmt != null ? stmt.executeQuery(selectSQL) : null) {
-            
-            if (rs != null) {
-                while (rs.next()) {
-                    Users user = new Users(
-                        rs.getString("name"),
-                        rs.getString("lastName"),
-                        rs.getString("address"),
-                        rs.getString("accountType"),
-                        rs.getInt("phoneNumber"),
-                        rs.getString("username")
-                    );
-                    users.add(user);
-                }
-            }
-            
-        } catch (SQLException e) {
-            System.err.println("Error retrieving all users: " + e.getMessage());
-        }
-        
-        return users;
-    }
     
     /**
      * Updates an existing user account.
