@@ -35,16 +35,29 @@ public class TransactionController {
 
     /**
      * Create a transaction record for an account
-     * Request body: { "description": "...", "transAmount": 100, "date": "...", "type": "DEBIT/CREDIT" }
+     * Request body: { "description": "...", "transAmount": 100, "date": "...", "type": "DEBIT/CREDIT", "status": "COMPLETE/FAIL/PENDING" }
      */
     @PostMapping("/transaction/create/{accountID}")
     public Map<String, String> createTransaction(
-            @RequestBody Transaction transaction,
+            @RequestBody Map<String, Object> request,
             @PathVariable Integer accountID) {
         
         Map<String, String> msg = new HashMap<>();
         try {
-            String result = transactionDatabase.createTransaction(transaction, accountID);
+            String description = (String) request.get("description");
+            Integer transAmount = (Integer) request.get("transAmount");
+            String type = (String) request.get("type");
+            String status = (String) request.get("status"); // COMPLETE, FAIL, or PENDING
+
+            Transaction transaction = new Transaction(
+                description,
+                transAmount,
+                Transaction.getCurrentDate(),
+                type,
+                status != null ? status : "PENDING"
+            );
+
+            String result = transactionDatabase.createTransaction(transaction, accountID, status);
             if (result.startsWith("Error")) {
                 msg.put("error", result);
             } else {
@@ -101,13 +114,14 @@ public class TransactionController {
             // Create sender account object
             Accounts senderAccount = new Accounts(fromRoutingNumber, fromAccountNumber, 0);
 
-            // Create transaction with recipient info
+            // Create transaction with recipient info (status will be set to COMPLETE on success)
             Transaction transaction = new Transaction(
                 description != null ? description : "Transfer",
                 amount,
                 "TRANSFER",
                 toAccountNumber,
-                toRoutingNumber
+                toRoutingNumber,
+                "PENDING"
             );
 
             // Execute the transfer

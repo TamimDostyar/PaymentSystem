@@ -18,14 +18,20 @@ public class TransactionDatabase {
      * Initializes the transactions table if it doesn't exist.
      * This method should be called before performing any operations.
      */
+    // Transaction status constants
+    public static final String STATUS_COMPLETE = "COMPLETE";
+    public static final String STATUS_FAIL = "FAIL";
+    public static final String STATUS_PENDING = "PENDING";
+
     public void createTransactionTB() {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "transAmount FLOAT NOT NULL, " +
-                "date String NOT NULL, " +
+                "date TEXT NOT NULL, " +
                 "type TEXT NOT NULL, " +
                 "description TEXT, " +
                 "accountID INTEGER NOT NULL, " +
+                "status TEXT NOT NULL DEFAULT 'PENDING', " +
                 "FOREIGN KEY(accountID) REFERENCES accounts(id)" +
                 ")";
         
@@ -40,14 +46,19 @@ public class TransactionDatabase {
         }
     }
 
-    public String createTransaction(Transaction transaction, Integer accountID) {
+    public String createTransaction(Transaction transaction, Integer accountID, String status) {
         if (transaction == null) {
             return "Error: Transaction object cannot be null";
         }
 
+        // Default to PENDING if status not provided
+        if (status == null || status.isEmpty()) {
+            status = STATUS_PENDING;
+        }
+
         String insertSQL = "INSERT INTO " + TABLE_NAME +
-                " (transAmount, date, type, description, accountID) " +
-                "VALUES (?, ?, ?, ?, ?)";
+                " (transAmount, date, type, description, accountID, status) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn != null ? conn.prepareStatement(insertSQL) : null) {
@@ -61,6 +72,7 @@ public class TransactionDatabase {
             pstmt.setString(3, transaction.getType());
             pstmt.setString(4, transaction.getDescription());
             pstmt.setInt(5, accountID);
+            pstmt.setString(6, status);
 
             int rowsAffected = pstmt.executeUpdate();
 
@@ -155,9 +167,9 @@ public class TransactionDatabase {
                 pstmt.executeUpdate();
             }
 
-            // Record transaction for sender (debit)
+            // Record transaction for sender (debit) with COMPLETE status
             String insertTransSQL = "INSERT INTO " + TABLE_NAME +
-                    " (transAmount, date, type, description, accountID) VALUES (?, ?, ?, ?, ?)";
+                    " (transAmount, date, type, description, accountID, status) VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(insertTransSQL)) {
                 pstmt.setInt(1, -amount); // Negative for debit
                 pstmt.setString(2, transaction.getDate());
@@ -165,10 +177,11 @@ public class TransactionDatabase {
                 pstmt.setString(4, transaction.getDescription() != null ? 
                         transaction.getDescription() : "Transfer to " + toAccountNumber);
                 pstmt.setInt(5, senderAccountId);
+                pstmt.setString(6, STATUS_COMPLETE);
                 pstmt.executeUpdate();
             }
 
-            // Record transaction for recipient (credit)
+            // Record transaction for recipient (credit) with COMPLETE status
             try (PreparedStatement pstmt = conn.prepareStatement(insertTransSQL)) {
                 pstmt.setInt(1, amount); // Positive for credit
                 pstmt.setString(2, transaction.getDate());
@@ -176,6 +189,7 @@ public class TransactionDatabase {
                 pstmt.setString(4, transaction.getDescription() != null ? 
                         transaction.getDescription() : "Transfer from " + account.getAccountNumber());
                 pstmt.setInt(5, recipientAccountId);
+                pstmt.setString(6, STATUS_COMPLETE);
                 pstmt.executeUpdate();
             }
 
@@ -211,7 +225,7 @@ public class TransactionDatabase {
         }
 
         StringBuilder result = new StringBuilder();
-        String sqlQuery = "SELECT t.transAmount, t.date, t.type, t.description, t.accountID, " +
+        String sqlQuery = "SELECT t.transAmount, t.date, t.type, t.description, t.accountID, t.status, " +
                 "a.accountNumber, a.routingNumber " +
                 "FROM " + TABLE_NAME + " t " +
                 "JOIN accounts a ON t.accountID = a.id " +
@@ -230,11 +244,13 @@ public class TransactionDatabase {
                     String date = rs.getString("date");
                     String type = rs.getString("type");
                     String description = rs.getString("description");
+                    String status = rs.getString("status");
                     String accountNumber = rs.getString("accountNumber");
                     result.append("Transaction: ")
                         .append("Amount: $").append(transAmount)
                         .append(", Date: ").append(date)
                         .append(", Type: ").append(type)
+                        .append(", Status: ").append(status)
                         .append(", Description: ").append(description)
                         .append(", Account: ").append(accountNumber)
                         .append("\n");
