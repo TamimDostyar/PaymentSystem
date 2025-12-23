@@ -7,7 +7,7 @@ public class CreateUser extends Users {
 
     
     public CreateUser() {
-        super(null, null, null, null, null, null);
+        super();
     }
     // Constructor with all fields
     public CreateUser(String name, String lastName, String address, String accountType,

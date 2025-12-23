@@ -4,37 +4,17 @@ package payment.controller;
 import payment.accounts.*;
 import payment.database.*;
 
-import org.apache.commons.lang3.ObjectUtils.Null;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 @RestController
 public class UsersController {
 
     // user database 
     UsersDatabase userDatabase = new UsersDatabase();
-
-    @GetMapping("/db-init")
-    public Map<String, String> initializeDB() {
-        Map<String, String> msg = new HashMap<>();
-        try {
-            userDatabase.create_userDB();
-            msg.put("Success", "Successfully initialized");
-        } catch (Exception e) {
-            msg.put("Error", "Initialization failed");
-        }
-        return msg;
-    }
 
     @PostMapping("/createUser")
     public Map<String, String> createUsers(@RequestBody CreateUser user) {

@@ -13,6 +13,8 @@ public class Users {
     private Integer phoneNumber;
 
 
+    public Users() {}
+
     public Users(String name, String lastName, String address, String accountType, Integer phoneNumber, String username){
         this.name = name;
         this.lastName = lastName;
@@ -57,5 +59,30 @@ public class Users {
 
     public Integer getPhoneNumber() {
         return this.phoneNumber;
+    }
+
+    // Setters for JSON deserialization
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPhoneNumber(Integer phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
