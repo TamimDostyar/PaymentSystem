@@ -22,7 +22,7 @@ public class AccountDatabase {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "accountNumber TEXT NOT NULL, " +
                 "routingNumber INTEGER NOT NULL CHECK(routingNumber >= 100000000 AND routingNumber <= 999999999), " +
-                "amountAvail FLOAT, " +
+                "amountAvail FLOAT NOT NULL DEFAULT 100.0, " +
                 "userID INTEGER NOT NULL, " +
                 "FOREIGN KEY(userID) REFERENCES users(id)" +
                 ")";
