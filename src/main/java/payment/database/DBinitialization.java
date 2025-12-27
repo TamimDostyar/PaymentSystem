@@ -8,7 +8,24 @@ import java.sql.SQLException;
 
 public class DBinitialization extends Database {
 
-    private String dbURL = "jdbc:sqlite:bank.db";
+    private String dbURL;
+
+    public DBinitialization() {
+        // Use /tmp directory for Render (writable) or local bank.db for development
+        String dbPath = System.getenv("DB_PATH");
+        if (dbPath != null && !dbPath.isEmpty()) {
+            dbURL = "jdbc:sqlite:" + dbPath;
+        } else {
+            // Default: use /tmp for production (Render), fallback to local for dev
+            String tmpDir = System.getProperty("java.io.tmpdir");
+            if (tmpDir != null && !tmpDir.isEmpty()) {
+                dbURL = "jdbc:sqlite:" + tmpDir + "/bank.db";
+            } else {
+                dbURL = "jdbc:sqlite:/tmp/bank.db";
+            }
+        }
+        System.out.println("Using database: " + dbURL);
+    }
 
     @Override
     public Connection connect() throws SQLException {
