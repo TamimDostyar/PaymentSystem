@@ -17,7 +17,7 @@ public class AccountDatabase {
     }
 
 
-    public void createAccountTB() {
+    public void createAccountTB() throws SQLException {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "accountNumber TEXT NOT NULL, " +
@@ -27,14 +27,19 @@ public class AccountDatabase {
                 "FOREIGN KEY(userID) REFERENCES users(id)" +
                 ")";
         
-        try (Connection conn = getConnection();
-             Statement stmt = conn != null ? conn.createStatement() : null) {
-            if (stmt != null) {
+        System.out.println("Creating accounts table with SQL: " + createTableSQL);
+        
+        try (Connection conn = getConnection()) {
+            if (conn == null) {
+                throw new SQLException("Failed to get database connection");
+            }
+            try (Statement stmt = conn.createStatement()) {
                 stmt.execute(createTableSQL);
-                System.out.println("Accounts table initialized successfully with account/routing number limits.");
+                System.out.println("Accounts table initialized successfully.");
             }
         } catch (SQLException e) {
-            System.err.println("Error initializing table: " + e.getMessage());
+            System.err.println("Error initializing accounts table: " + e.getMessage());
+            throw e;
         }
     }
 

@@ -27,7 +27,7 @@ public class UsersDatabase {
      * Initializes the users table if it doesn't exist.
      * This method should be called before performing any operations.
      */
-    public void create_userDB() {
+    public void create_userDB() throws SQLException {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT NOT NULL, " +
@@ -39,14 +39,19 @@ public class UsersDatabase {
                 "password TEXT NOT NULL" +
                 ")";
         
-        try (Connection conn = getConnection();
-             Statement stmt = conn != null ? conn.createStatement() : null) {
-            if (stmt != null) {
+        System.out.println("Creating users table with SQL: " + createTableSQL);
+        
+        try (Connection conn = getConnection()) {
+            if (conn == null) {
+                throw new SQLException("Failed to get database connection");
+            }
+            try (Statement stmt = conn.createStatement()) {
                 stmt.execute(createTableSQL);
                 System.out.println("Users table initialized successfully.");
             }
         } catch (SQLException e) {
             System.err.println("Error initializing table: " + e.getMessage());
+            throw e;
         }
     }
     

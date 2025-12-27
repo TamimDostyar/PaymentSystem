@@ -20,13 +20,25 @@ public class AccountController {
     @GetMapping("/db-init")
     public Map<String, String> initializeDB() {
         Map<String, String> msg = new HashMap<>();
+        
+        // Create users table
         try {
             userDatabase.create_userDB();
-            accountDatabase.createAccountTB();
-            msg.put("Success", "Successfully initialized");
+            msg.put("users_table", "Created successfully");
         } catch (Exception e) {
-            msg.put("Error", "Initialization failed");
+            msg.put("users_table", "FAILED: " + e.getMessage());
+            e.printStackTrace();
         }
+        
+        // Create accounts table
+        try {
+            accountDatabase.createAccountTB();
+            msg.put("accounts_table", "Created successfully");
+        } catch (Exception e) {
+            msg.put("accounts_table", "FAILED: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
         return msg;
     }
 
