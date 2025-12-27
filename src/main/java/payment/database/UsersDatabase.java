@@ -36,7 +36,7 @@ public class UsersDatabase {
                 "accountType TEXT NOT NULL, " +
                 "username TEXT UNIQUE, " +
                 "phoneNumber INTEGER NOT NULL, " +
-                "password TEXT NOT NULL, " +
+                "password TEXT NOT NULL" +
                 ")";
         
         try (Connection conn = getConnection();
@@ -124,6 +124,7 @@ public class UsersDatabase {
             
             if (rs.next()) {
                 return new Users(
+                    rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("lastName"),
                     rs.getString("address"),

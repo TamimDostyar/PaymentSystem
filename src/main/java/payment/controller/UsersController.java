@@ -55,6 +55,7 @@ public class UsersController {
                 userData.put("Error", "User not found");
                 return userData;
             }
+            userData.put("id", data.getId().toString());
             userData.put("name", data.getName());
             userData.put("lastName", data.getLastName());
             userData.put("address", data.getAddress());
