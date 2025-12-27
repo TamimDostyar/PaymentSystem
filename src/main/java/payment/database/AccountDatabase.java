@@ -79,5 +79,35 @@ public class AccountDatabase {
         }
     }
 
-
+    /**
+     * Get account data for a user
+     */
+    public Accounts getAccountByUserID(Integer userID) {
+        String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE userID = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn != null ? conn.prepareStatement(selectSQL) : null) {
+            
+            if (pstmt == null) {
+                return null;
+            }
+            
+            pstmt.setInt(1, userID);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                Accounts account = new Accounts(
+                    rs.getInt("routingNumber"),
+                    rs.getString("accountNumber"),
+                    rs.getDouble("amountAvail")
+                );
+                return account;
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error retrieving account: " + e.getMessage());
+        }
+        
+        return null;
+    }
 }

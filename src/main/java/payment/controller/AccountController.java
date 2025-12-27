@@ -71,4 +71,25 @@ public class AccountController {
         
         return msg;
     }
+
+    @GetMapping("/getAccount/{userID}")
+    public Map<String, String> getAccount(@PathVariable Integer userID) {
+        Map<String, String> msg = new HashMap<>();
+        
+        try {
+            Accounts account = accountDatabase.getAccountByUserID(userID);
+            
+            if (account == null) {
+                msg.put("error", "No account found for this user");
+            } else {
+                msg.put("accountNumber", account.getAccountNumber());
+                msg.put("routingNumber", String.valueOf(account.getRoutingNumber()));
+                msg.put("balance", String.valueOf(account.getAmountAvail()));
+            }
+        } catch (Exception e) {
+            msg.put("error", "Failed to get account: " + e.getMessage());
+        }
+        
+        return msg;
+    }
 }
