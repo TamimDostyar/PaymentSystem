@@ -1,4 +1,16 @@
-This is a payment system application with very basic routings and necessity a simple applications can have, like Venmo and CashApp. The software is developed mainly on Java and containerized on Docker. This software is using sprinboot for web server access, and it stores crucial information in SQLite. This program is mainly built for practice purpose and if needed, it can be well-developed.
+Payment System Application
+
+A simple backend payment system application that demonstrates the core routing and functionality of basic payment platforms such as Venmo and Cash App. This project is primarily built for practice and learning purposes, but its structure allows for further expansion into a more robust system.
+
+The application is developed in Java, containerized with Docker, and uses Spring Boot for web server access. Essential data is stored using SQLite.
+
+Tech Stack:
+
+    Java 23
+    Spring Boot
+    Gradle (dependency & package management)
+    SQLite (database)
+    Docker & Docker Compose (containerization)
 
 A few things to remember about this application:
 
@@ -6,9 +18,8 @@ A few things to remember about this application:
     2 - The program is using Gradle for package management
     3 - Docker is used for containerization
 
-Run this on your computer:
-
-    1 - If you are using Docker, try:
+You can run the application either with Docker or directly using Gradle.
+    1 - If you are using Docker, try(Recommended):
         1 - `Docker-compose build && docker-compose up`
     2 - If only want to use Gradle, try:
         1 - `./gradlew build && gradlew BootRun`
